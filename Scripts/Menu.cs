@@ -57,6 +57,22 @@ public class Menu : MonoBehaviour
     {
         LoadingManager.Instance.LoadScene(3, 4);
     }
+    
+    
+    public void Next2()
+    {
+        LoadingManager.Instance.LoadScene(5, 6);
+    }
 
+
+    public void Next3()
+    {
+        LoadingManager.Instance.LoadScene(7, 8);
+    }
+
+    public void PuntosFinales()
+    {
+        LoadingManager.Instance.LoadScene(9, 11);
+    }
 
 }

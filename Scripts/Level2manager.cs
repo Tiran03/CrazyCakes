@@ -24,6 +24,7 @@ public class Level2manager : MonoBehaviour
     private QueueTDA<GameObject> _piecesQueue = new QueueTDA<GameObject>();
     private int successfulVerifications = 0;
 
+    private int puntajePorTiempo = 0; // Puntaje del nivel basado en el tiempo
 
     private void Start()
     {
@@ -40,6 +41,7 @@ public class Level2manager : MonoBehaviour
 
         // Actualizar el TextMeshPro con el tiempo inicial
         UpdateTimerText();
+        CalcularPuntajePorTiempo();
     }
 
 
@@ -51,13 +53,18 @@ public class Level2manager : MonoBehaviour
 
         // Actualizar el TextMeshPro del temporizador
         UpdateTimerText();
+        CalcularPuntajePorTiempo();
+
 
         // Verificar si el tiempo se agotó
         if (currentTime <= 0)
         {
+            ScriptPersistente.instance.puntajePorTiempo += puntajePorTiempo;
+
             // El jugador perdió el juego, aquí puedes mostrar un mensaje de pérdida o realizar otras acciones
             LoadingManager.Instance.LoadScene(4, 6);
         }
+        
     }
 
 
@@ -153,6 +160,7 @@ public class Level2manager : MonoBehaviour
                 {
                     // El jugador ganó el juego después de dos verificaciones exitosas
                     Debug.Log("¡Ganaste el juego!");
+                    SumarPuntosGanados();
                     LoadingManager.Instance.LoadScene(4, 5);
                 }
                 else
@@ -190,6 +198,20 @@ public class Level2manager : MonoBehaviour
     {
         // Mostrar el tiempo restante en el TextMeshPro
         timerText.text = "Tiempo: " + Mathf.CeilToInt(currentTime).ToString();
+    }
+
+    private void SumarPuntosGanados()
+    {
+        // Suma el puntaje por tiempo al puntaje total
+        ScriptPersistente.instance.puntajeTotal += puntajePorTiempo;
+    }
+
+
+
+    private void CalcularPuntajePorTiempo()
+    {
+        // Puntaje directamente relacionado con el tiempo restante
+        puntajePorTiempo = Mathf.RoundToInt(currentTime);
     }
 }
 

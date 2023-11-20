@@ -24,11 +24,16 @@ public class Level1manager : MonoBehaviour
         Instance = this;
     }
 
+    private int puntajePorTiempo = 0; // Puntaje del nivel basado en el tiempo
+
     private void Start()
     {
         isGameRunning = true;
         gameTimer = 40.0f;
         timerText.text = "Tiempo: " + gameTimer.ToString("F1");
+
+        // Inicializa el puntaje por tiempo
+        CalcularPuntajePorTiempo();
     }
 
     void Update()
@@ -40,13 +45,20 @@ public class Level1manager : MonoBehaviour
             // Actualiza el texto del temporizador en el objeto de texto
             timerText.text = "Tiempo: " + Mathf.Max(0, gameTimer).ToString("F1"); // Muestra el tiempo con un decimal
 
+            // Actualiza el puntaje por tiempo en cada fotograma
+            CalcularPuntajePorTiempo();
+
             if (gameTimer <= 0)
             {
                 isGameRunning = false;
+
+                // Carga la escena de pérdida
                 LoadingManager.Instance.LoadScene(2, 6);
             }
+            
         }
     }
+
 
     public void OnDiscClick(Disc clickedDisc)
     {
@@ -72,6 +84,7 @@ public class Level1manager : MonoBehaviour
             {
                 // Aquí puedes mostrar un mensaje de victoria o realizar otras acciones
                 print("¡Has ganado el juego!");
+                SumarPuntosGanados();
                 LoadingManager.Instance.LoadScene(2, 3);
             }
         }
@@ -196,5 +209,20 @@ public class Level1manager : MonoBehaviour
         }
 
         return true; // Todos los discos están ordenados por tipo de objeto
+    }
+
+
+    private void SumarPuntosGanados()
+    {
+        // Suma el puntaje por tiempo al puntaje total
+        ScriptPersistente.instance.puntajeTotal += puntajePorTiempo;
+    }
+
+
+
+    private void CalcularPuntajePorTiempo()
+    {
+        // Puntaje directamente relacionado con el tiempo restante
+        puntajePorTiempo = Mathf.RoundToInt(gameTimer);
     }
 }
