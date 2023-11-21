@@ -8,6 +8,8 @@ public class CandySortingGame : MonoBehaviour
     //public GameObject correctParticle;
     //public GameObject nextLevelPortal;
 
+    private IQuickSort<string> quickSort;
+
     private string[] flavors = { "Chocolate", "Vainilla", "Fresa", "Caramelo", "Limon" };
     private int currentIndex = 0;
     public int correctCandies = 0;
@@ -20,6 +22,7 @@ public class CandySortingGame : MonoBehaviour
 
     void Start()
     {
+        quickSort = new QuickSort<string>();
         ShuffleCandies();
         isGameRunning = true;
         gameTimer = 40.0f;

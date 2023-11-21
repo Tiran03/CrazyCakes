@@ -24,7 +24,7 @@ public class ABBHighScores : MonoBehaviour
         abb.InicializarArbol();
         for(int i = 1; i <= cantidadJugadores; i++)
         {
-            Jugador jugador = new Jugador("Jugador" + i, Random.Range(50, 150));
+            Jugador jugador = new Jugador("Jugador" + i, Random.Range(50, 100));
             abb.AgregarJugador(jugador);
         }
         MostrarPuntajes();

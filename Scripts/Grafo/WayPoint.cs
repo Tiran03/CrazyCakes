@@ -6,6 +6,7 @@ public class WayPoint : MonoBehaviour
 {
 
     [SerializeField] private List<WayPoint> m_waypoints = new List<WayPoint>();
+    [SerializeField] public bool activatesDefeat = false; // Nueva propiedad
 
     public List<WayPoint> GetWaypoints()
     {

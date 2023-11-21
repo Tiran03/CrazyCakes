@@ -53,7 +53,15 @@ public class GameController : MonoBehaviour
                 WayPoint selectedNode = hit.collider.GetComponent<WayPoint>();
                 player.MoveToNode(selectedNode);
 
-                if (selectedNode == endNode)
+                if (selectedNode.activatesDefeat)
+                {
+                    // Implementa aquí la lógica de derrota, por ejemplo, mostrando un mensaje o cargando una escena de derrota.
+                    Debug.Log("¡Derrota activada!");
+                    // Ejemplo de carga de una nueva escena después de la derrota
+                    LoadingManager.Instance.LoadScene(8, 10);
+                }
+
+                else if (selectedNode == endNode)
                 {
                     // ¡Ganaste! Puedes implementar aquí la lógica de victoria, como cargar una nueva escena.
                     Debug.Log("¡Ganaste!");
