@@ -26,6 +26,19 @@ public class WayPoint : MonoBehaviour
         return m_waypoints.Contains(p_waypoint);
     }
 
+    public List<WayPoint> GetBackwardWaypoints()
+    {
+        List<WayPoint> backwardWaypoints = new List<WayPoint>();
+        foreach (WayPoint waypoint in m_waypoints)
+        {
+            if (waypoint.Contains(this))
+            {
+                backwardWaypoints.Add(waypoint);
+            }
+        }
+        return backwardWaypoints;
+    }
+
 
     private void OnDrawGizmos()
     {

@@ -11,7 +11,7 @@ public class PuntajesFinales : MonoBehaviour
         int puntajeTotalFinal = ScriptPersistente.instance.puntajeTotal + ScriptPersistente.instance.puntajePorTiempo;
 
         // Mostrar el puntaje total en la escena de puntajes finales
-        puntajesText.text = "Puntaje Total: " + puntajeTotalFinal;
+        puntajesText.text = "1LugarJugador 1 - Puntaje: " + puntajeTotalFinal;
     }
 }
 
