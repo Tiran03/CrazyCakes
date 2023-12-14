@@ -427,8 +427,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Crazy Cakes
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4a00f0f54675d69468caa44a652b33ac, type: 2}
+  m_sharedMaterial: {fileID: 859140748018475312, guid: 4a00f0f54675d69468caa44a652b33ac, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -581,6 +581,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntajeTotal: 0
+  puntajePorTiempo: 0
 --- !u!4 &1480872137
 Transform:
   m_ObjectHideFlags: 0
