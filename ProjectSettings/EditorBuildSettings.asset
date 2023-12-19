@@ -21,9 +21,24 @@ EditorBuildSettings:
     path: Assets/Scenes/Level 2.unity
     guid: 8745010c269d5d14d8dd6b4f4fe2ab7d
   - enabled: 1
+    path: Assets/Scenes/Victoria Nivel 2.unity
+    guid: e9df54cf9cbae9b4788826d6abc0f8c2
+  - enabled: 1
+    path: Assets/Scenes/Level 3.unity
+    guid: 57e2a06b6ed486d40a065dd9079331fa
+  - enabled: 1
+    path: Assets/Scenes/Victoria Nivel 3.unity
+    guid: f14e8d23c4d434a4db29fd92a5b9ff8b
+  - enabled: 1
+    path: Assets/Scenes/Level 4.unity
+    guid: 73256069d7f10144987b84a4e480fb3d
+  - enabled: 1
     path: Assets/Scenes/Victoria.unity
     guid: 193850187b04e4f4eb181b0de7c0c961
   - enabled: 1
     path: Assets/Scenes/Perdiste.unity
     guid: 8e2ae25bf8b45a64d9c84e90c07d2118
+  - enabled: 1
+    path: Assets/Scenes/PuntajeFinal.unity
+    guid: 6abd21f0cce5d1141ac9a124ff67cc5c
   m_configObjects: {}
