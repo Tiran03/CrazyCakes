@@ -7,6 +7,7 @@ public class WayPoint : MonoBehaviour
 
     [SerializeField] private List<WayPoint> m_waypoints = new List<WayPoint>();
     [SerializeField] public bool activatesDefeat = false; // Nueva propiedad
+    [SerializeField] private bool visited = false;
 
     public List<WayPoint> GetWaypoints()
     {
@@ -24,6 +25,29 @@ public class WayPoint : MonoBehaviour
     public bool Contains(WayPoint p_waypoint)
     {
         return m_waypoints.Contains(p_waypoint);
+    }
+
+    public bool IsVisited()
+    {
+        return visited;
+    }
+
+    public void MarkVisited()
+    {
+        visited = true;
+    }
+
+    public List<WayPoint> GetOneWaypoints()
+    {
+        List<WayPoint> oneWaypoints = new List<WayPoint>();
+        foreach (WayPoint waypoint in m_waypoints)
+        {
+            if (!waypoint.Contains(this))
+            {
+                oneWaypoints.Add(waypoint);
+            }
+        }
+        return oneWaypoints;
     }
 
     public List<WayPoint> GetBackwardWaypoints()

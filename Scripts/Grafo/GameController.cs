@@ -1,17 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.SceneManagement;
-using System.Collections.Generic;
-
+//using System.Collections.Generic;
+using System.Collections;
 
 public class GameController : MonoBehaviour
 {
     private IGraph<WayPoint> graph;
-    public WayPoint startNode; 
-    public WayPoint endNode;  
+    public WayPoint startNode;
+    public WayPoint endNode;
     public PlayerController player;
 
-    void Start()
+    private List<WayPoint> shortestPath;
+    private List<WayPoint> NodosDerrota = new List<WayPoint>();
+    private WayPoint currentNode; // Nuevo: Nodo actual del jugador
+
+    public void Start()
     {
         graph = new Graph<WayPoint>();
 
@@ -30,17 +34,18 @@ public class GameController : MonoBehaviour
             }
         }
 
+        // Invocar el método Dijkstra con un retraso de 1 segundo
+        Invoke("RunDijkstra", 1f);
+    }
+
+    void RunDijkstra()
+    {
         // Usar el algoritmo de Dijkstra para encontrar el camino más corto
-        List<WayPoint> shortestPath = Dijkstra(graph, startNode, endNode);
+        shortestPath = Dijkstra(graph, startNode, endNode);
+        currentNode = startNode; // Nuevo: Inicializar el nodo actual al inicio
 
-        
-
-        for (int i = 1; i < shortestPath.Count; i++)
-        {
-            player.MoveToNode(shortestPath[i]);
-        }
-        
-        //player.MoveToNode(startNode);
+        // Mover al jugador al nodo de inicio
+        player.MoveToNode(startNode);
     }
 
     void Update()
@@ -57,22 +62,47 @@ public class GameController : MonoBehaviour
             {
                 WayPoint selectedNode = hit.collider.GetComponent<WayPoint>();
 
-                // Verificar si el nodo seleccionado activa la derrota y no se puede volver atrás
-                if (selectedNode.activatesDefeat && !CanGoBackward(selectedNode))
+                if (!selectedNode.IsVisited())
                 {
-                    Debug.Log("¡Derrota activada!");
-                    LoadingManager.Instance.LoadScene(8, 10);
-                }
+                    selectedNode.MarkVisited();
 
-                // Verificar si el nodo seleccionado es el nodo final (endNode)
-                else if (selectedNode == endNode)
+                    // Verificar si el nodo clickeado está en la lista de NodosDerrota
+                    if (NodosDerrota.Contains(selectedNode))
+                    {
+                        player.MoveToNode(selectedNode);
+                        Debug.Log("¡Derrota activada!");
+                        LoadingManager.Instance.LoadScene(8, 10);
+                    }
+                    // Verificar si el nodo seleccionado activa la derrota y no se puede volver atrás
+                    else if (selectedNode.activatesDefeat && !CanGoBackward(selectedNode))
+                    {
+                        Debug.Log("¡Derrota activada!");
+                        LoadingManager.Instance.LoadScene(8, 10);
+                    }
+                    // Verificar si el nodo seleccionado es el nodo final (endNode)
+                    else if (selectedNode == endNode)
+                    {
+                        Debug.Log("¡Ganaste!");
+                        LoadingManager.Instance.LoadScene(8, 9);
+                    }
+                    // Mover al jugador al nodo seleccionado
+                    else
+                    {
+                        player.MoveToNode(selectedNode);
+                        currentNode = selectedNode; // Nuevo: Actualizar el nodo actual al seleccionado
+
+                        // Verificar si el nodo actual no tiene conexiones salientes
+                        if (currentNode != startNode && (currentNode.GetWaypoints().Count == 0 && currentNode.GetOneWaypoints().Count == 0))
+                        {
+                            Debug.Log("¡Derrota activada! Este nodo no tiene conexiones salientes.");
+                            LoadingManager.Instance.LoadScene(8, 10);
+                        }
+                    }
+                }
+                else
                 {
-                    Debug.Log("¡Ganaste!");
-                    LoadingManager.Instance.LoadScene(8, 9);
+                    Debug.Log("Ya has visitado este nodo.");
                 }
-
-                // Mover al jugador al nodo seleccionado
-                player.MoveToNode(selectedNode);
             }
         }
     }
@@ -80,16 +110,15 @@ public class GameController : MonoBehaviour
 
 
 
-   
+
+
 
     public List<WayPoint> Dijkstra(IGraph<WayPoint> graph, WayPoint startNode, WayPoint endNode)
-
     {
         Dictionary<WayPoint, float> distance = new Dictionary<WayPoint, float>();
         Dictionary<WayPoint, WayPoint> previous = new Dictionary<WayPoint, WayPoint>();
         List<WayPoint> unvisited = new List<WayPoint>();
 
-        // Obtener todos los nodos del grafo
         List<WayPoint> nodes = graph.GetNodes();
 
         foreach (WayPoint node in nodes)
@@ -98,7 +127,6 @@ public class GameController : MonoBehaviour
             previous[node] = null;
             unvisited.Add(node);
         }
-
 
         distance[startNode] = 0;
 
@@ -114,11 +142,25 @@ public class GameController : MonoBehaviour
                 }
             }
 
+            if (currentNode == null)
+            {
+                // No se encontró ningún nodo, esto podría ser un problema
+                Debug.LogError("Error: No se encontró ningún nodo en el bucle Dijkstra.");
+                break;
+            }
+
             unvisited.Remove(currentNode);
 
             if (currentNode == endNode)
             {
                 break;
+            }
+
+            // Verificar si el nodo actual no tiene conexiones salientes después del clic
+            if (currentNode.GetWaypoints().Count == 0 && currentNode.GetOneWaypoints().Count == 0)
+            {
+                Debug.Log($"¡Alerta! El nodo {currentNode.gameObject.name} no tiene conexiones salientes.");
+                NodosDerrota.Add(currentNode);  // Agregar el nodo a la lista de nodos de derrota
             }
 
             foreach (WayPoint neighbor in currentNode.GetWaypoints())
@@ -132,7 +174,8 @@ public class GameController : MonoBehaviour
                 }
             }
 
-            foreach (WayPoint backwardNeighbor in currentNode.GetBackwardWaypoints())
+            // Considerar conexiones de un solo sentido (azules)
+            foreach (WayPoint backwardNeighbor in currentNode.GetOneWaypoints())
             {
                 float alt = distance[currentNode] + Vector2.Distance(currentNode.transform.position, backwardNeighbor.transform.position);
 
@@ -153,9 +196,11 @@ public class GameController : MonoBehaviour
             current = previous[current];
         }
 
+        // Mover al jugador al nodo de inicio al final del algoritmo
         player.MoveToNode(startNode);
         return path;
     }
+
 
     private bool CanGoBackward(WayPoint waypoint)
     {
@@ -168,6 +213,15 @@ public class GameController : MonoBehaviour
             }
         }
         return false; // No hay conexión hacia atrás al nodo de inicio
+    }
+
+    private bool IsConnectedToCurrentNode(WayPoint targetNode)
+    {
+        if (currentNode != null)
+        {
+            return currentNode.Contains(targetNode);
+        }
+        return false;
     }
 
 
