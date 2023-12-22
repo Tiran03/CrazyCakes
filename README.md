@@ -1,1 +1,1 @@
-Tuve que separar la carpeta de assets en varias partes porque sino no me dejaba subirlo y la build ya esta como un .ZIP
+Tuve que separar la carpeta de assets en varias partes porque sino no me dejaba subirlo, pero crean una carpeta de assets y ya tienen todo para unity, ya que les pasé tambien la carpeta de proyet Settings y packages. La build ya esta como un .ZIP
