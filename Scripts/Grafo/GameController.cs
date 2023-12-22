@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour
     public WayPoint startNode;
     public WayPoint endNode;
     public PlayerController player;
-
+    private List<WayPoint> currentPath;
     private List<WayPoint> shortestPath;
     private List<WayPoint> NodosDerrota = new List<WayPoint>();
     private WayPoint currentNode; // Nuevo: Nodo actual del jugador
@@ -88,13 +88,23 @@ public class GameController : MonoBehaviour
                     // Mover al jugador al nodo seleccionado
                     else
                     {
-                        player.MoveToNode(selectedNode);
                         currentNode = selectedNode; // Nuevo: Actualizar el nodo actual al seleccionado
+
+                        currentPath = Dijkstra(graph, startNode, endNode);
+
+                        player.MoveToNode(currentNode);
+
+
+                        // Verificar si el jugador está yendo por el recorrido creado por Dijkstra y Graph
+                        if (!IsPlayerOnPath())
+                        {
+                            Debug.Log("Oh, no! te saliste del camino y no puedes volver atras. Tendras que perder para reiniciar");
+                        }
 
                         // Verificar si el nodo actual no tiene conexiones salientes
                         if (currentNode != startNode && (currentNode.GetWaypoints().Count == 0 && currentNode.GetOneWaypoints().Count == 0))
                         {
-                            Debug.Log("¡Derrota activada! Este nodo no tiene conexiones salientes.");
+                            Debug.Log("¡Derrota activada! Este nodo es malo.");
                             LoadingManager.Instance.LoadScene(8, 10);
                         }
                     }
@@ -106,9 +116,6 @@ public class GameController : MonoBehaviour
             }
         }
     }
-
-
-
 
 
 
@@ -144,7 +151,7 @@ public class GameController : MonoBehaviour
 
             if (currentNode == null)
             {
-                // No se encontró ningún nodo, esto podría ser un problema
+               
                 Debug.LogError("Error: No se encontró ningún nodo en el bucle Dijkstra.");
                 break;
             }
@@ -156,11 +163,11 @@ public class GameController : MonoBehaviour
                 break;
             }
 
-            // Verificar si el nodo actual no tiene conexiones salientes después del clic
+            
             if (currentNode.GetWaypoints().Count == 0 && currentNode.GetOneWaypoints().Count == 0)
             {
-                Debug.Log($"¡Alerta! El nodo {currentNode.gameObject.name} no tiene conexiones salientes.");
-                NodosDerrota.Add(currentNode);  // Agregar el nodo a la lista de nodos de derrota
+                Debug.Log($"¡Cuidado! El nodo {currentNode.gameObject.name} es malvado.");
+                NodosDerrota.Add(currentNode);  
             }
 
             foreach (WayPoint neighbor in currentNode.GetWaypoints())
@@ -174,7 +181,7 @@ public class GameController : MonoBehaviour
                 }
             }
 
-            // Considerar conexiones de un solo sentido (azules)
+            
             foreach (WayPoint backwardNeighbor in currentNode.GetOneWaypoints())
             {
                 float alt = distance[currentNode] + Vector2.Distance(currentNode.transform.position, backwardNeighbor.transform.position);
@@ -222,6 +229,12 @@ public class GameController : MonoBehaviour
             return currentNode.Contains(targetNode);
         }
         return false;
+    }
+
+    private bool IsPlayerOnPath()
+    {
+        // Verificar si el jugador está yendo por el recorrido creado por Dijkstra y Graph
+        return currentPath != null && currentPath.Count > 0 && currentPath.Contains(player.GetCurrentNode());
     }
 
 
