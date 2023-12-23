@@ -18,6 +18,7 @@ public class Jugador
 }
 
 
+
 public class NodoABB
 {
     public Jugador Jugador { get; set; }
